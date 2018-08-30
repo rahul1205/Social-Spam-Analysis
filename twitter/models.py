@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django_mysql.models import ListTextField
 
@@ -25,3 +26,11 @@ class Twitter(models.Model):
     region = models.CharField(null=True, blank=True, max_length=200)
     numbers = models.TextField(null=True, blank=True)
 
+    class Meta:
+        verbose_name = _('Tweet data')
+
+    def __unicode__(self):
+        return str(self.tweet_id)
+
+    def __str__(self):
+        return str(self.tweet_id)
