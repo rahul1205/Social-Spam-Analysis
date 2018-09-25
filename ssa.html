@@ -3,24 +3,71 @@
 <head>
 <script src="http://maps.google.com/maps/api/js?key=<YOUR_API_KEY>"></script>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="https://cdn.jsdelivr.net/gmap3/7.2.0/gmap3.min.js"></script>
 <script>
 $(document).ready(function(){
     $("button").click(function(){
-        $.get("http://localhost:8000/tweet/?number=20180726", function(data, status){
-	    $("#map").gmap3();
+        query_param = $("#inputField").val()
+        $.get("http://localhost:8000/tweet/?number="+query_param, function(data, status){
 
-            console.log("Data:" + JSON.stringify(data));
+            /*responseData = JSON.stringify(data);
+            */
+            if (data[0])
+        {
+
+            if (data[0].latitude != 0 && data[0].longitude != 0){
+              map = new OpenLayers.Map("map");
+              map.addLayer(new OpenLayers.Layer.OSM());
+
+              var lonLat = new OpenLayers.LonLat(data[0].longitude, data[0].latitude)
+                    .transform(
+                      new OpenLayers.Projection("EPSG:4326"), // transform from WGS 1984
+                      map.getProjectionObject() // to Spherical Mercator Projection
+                    );
+                    
+              var zoom=16;
+
+              var markers = new OpenLayers.Layer.Markers( "Markers" );
+              map.addLayer(markers);
+              
+              markers.addMarker(new OpenLayers.Marker(lonLat));
+              
+              map.setCenter (lonLat, zoom);
+          }
+
+            else
+              console.log("Sorry, location not found")
+        }
+            else
+              console.log("Incorrect format")
+
         });
     });
 });
 </script>
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+
 </head>
 <body>
 
-<button>Button</button>
-<div id="map"></div>
 
+<input id="inputField"></input>
+<button>Button</button>
+<br><br><br>
+<div id="map" style="width:100%;height:500px"></div>
+
+<!-- <script>
+function myMap() {
+  var myCenter = new google.maps.LatLng(51.508742,-0.120850);
+  var mapCanvas = document.getElementById("map");
+  var mapOptions = {center: myCenter, zoom: 5};
+  var map = new google.maps.Map(mapCanvas, mapOptions);
+  var marker = new google.maps.Marker({position:myCenter});
+  marker.setMap(map);
+}
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBu-916DdpKAjTmJNIgngS6HL_kDIKU0aU&callback=myMap"></script>
+ -->
 </body>
 </html>
 
